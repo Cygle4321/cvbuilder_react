@@ -1,7 +1,8 @@
 import { Education, Experience, Hobby, Language, PersonalDetails, Skill } from "@/type";
 import React, { forwardRef } from "react";
 import Image from "next/image";
-import { BriefcaseBusiness, GraduationCap, Mail, MapPinCheckInside, Phone, Star } from "lucide-react";
+import { BriefcaseBusiness, GraduationCap, Mail, MapPinCheckInside, Phone, Star, Wrench, Languages, Heart, User } from "lucide-react";
+import { motion } from "framer-motion";
 
 type Props = {
   personalDetails: PersonalDetails;
@@ -71,9 +72,13 @@ const CVPreview = forwardRef<HTMLDivElement, Props>(
     ref
   ) => {
     return (
-      <div
+      <motion.div
         ref={ref}
-        className={`flex p-16 w-[950px] h-[1200px] shadow-lg ${download ? "mb-10" : ""}`}
+        layout
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className={`flex p-16 w-[950px] h-[1200px] shadow-lg bg-base-100 text-base-content overflow-hidden ${download ? "mb-10" : ""}`}
         data-theme={theme}
       >
         <div className="flex flex-col w-1/3">
@@ -91,7 +96,9 @@ const CVPreview = forwardRef<HTMLDivElement, Props>(
 
           <div className="mt-4 flex-col w-full">
             <div>
-              <h1 className="uppercase font-bold my-2">Contact</h1>
+              <h1 className="uppercase font-bold my-2 flex items-center gap-2">
+                <User className="w-5" /> Contact
+              </h1>
               <ul className="space-y-2">
                 <li className="flex">
                   <div className="break-all text-sm relative">
@@ -129,7 +136,9 @@ const CVPreview = forwardRef<HTMLDivElement, Props>(
             </div>
 
             <div className="mt-6">
-              <h1 className="uppercase font-bold my-2">Competences</h1>
+              <h1 className="uppercase font-bold my-2 flex items-center gap-2">
+                <Wrench className="w-5" /> Competences
+              </h1>
               <div className="flex flex-wrap gap-2">
                 {skills.map((skill, index) => (
                   <p key={index} className="badge badge-primary uppercase">
@@ -140,7 +149,9 @@ const CVPreview = forwardRef<HTMLDivElement, Props>(
             </div>
 
             <div className="mt-6">
-              <h1 className="uppercase font-bold my-2">Langues</h1>
+              <h1 className="uppercase font-bold my-2 flex items-center gap-2">
+                <Languages className="w-5" /> Langues
+              </h1>
               <div className="flex flex-col space-y-2">
                 {languages.map((lang, index) => (
                   <div key={index}>
@@ -152,7 +163,9 @@ const CVPreview = forwardRef<HTMLDivElement, Props>(
             </div>
 
             <div className="mt-6">
-              <h1 className="uppercase font-bold my-2">Loisirs</h1>
+              <h1 className="uppercase font-bold my-2 flex items-center gap-2">
+                <Heart className="w-5" /> Loisirs
+              </h1>
               <div className="flex flex-col space-y-2">
                 {hobbies.map((hobby, index) => (
                   <div key={index}>
@@ -177,13 +190,14 @@ const CVPreview = forwardRef<HTMLDivElement, Props>(
 
           <section className="w-full h-fit p-5">
             <div>
-              <h1 className="uppercase font-bold mb-2">Expériences</h1>
+              <h1 className="uppercase font-bold mb-2 flex items-center gap-2">
+                <BriefcaseBusiness className="w-5" /> Expériences
+              </h1>
               <ul className="steps steps-vertical space-y-3">
                 {experiences.map((exp, index) => (
                   <li className="step step-primary" key={index}>
                     <div className="text-left">
                       <h2 className="flex text-md uppercase font-bold">
-                        <BriefcaseBusiness className="w-5" />
                         <span className="ml-2">{exp.jobTitle}</span>
                       </h2>
                       <div className="text-sm my-2">
@@ -200,13 +214,14 @@ const CVPreview = forwardRef<HTMLDivElement, Props>(
             </div>
 
             <div className="mt-6">
-              <h1 className="uppercase font-bold mb-2">Formations</h1>
+              <h1 className="uppercase font-bold mb-2 flex items-center gap-2">
+                <GraduationCap className="w-5" /> Formations
+              </h1>
               <ul className="steps steps-vertical space-y-3">
                 {educations.map((edu, index) => (
                   <li className="step step-primary" key={index}>
                     <div className="text-left">
                       <h2 className="flex text-md uppercase font-bold">
-                        <GraduationCap className="w-5" />
                         <span className="ml-2">{edu.degree}</span>
                       </h2>
                       <div className="text-sm my-2">
@@ -223,7 +238,7 @@ const CVPreview = forwardRef<HTMLDivElement, Props>(
             </div>
           </section>
         </div>
-      </div>
+      </motion.div>
     );
   }
 );
