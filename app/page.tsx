@@ -5,6 +5,7 @@ import Image from "next/image";
 import PersonalDetailsForm from "./components/PersonalDetailsForm";
 import { Education, Experience, Hobby, Language, PersonalDetails, Skill } from "@/type";
 import { useEffect, useRef, useState } from "react";
+import { useLocalStorage } from "./hooks/useLocalStorage";
 import { educationsPreset, experiencesPreset, hobbiesPreset, languagesPreset, personalDetailsPreset, skillsPreset } from "@/presets";
 import CVPreview from "./components/CVPreview";
 import ExperienceForm from "./components/ExperienceForm";
@@ -18,15 +19,15 @@ import confetti from "canvas-confetti";
 
 export default function Home() {
 
-  const [personalDetails, setPersonalDetails] = useState<PersonalDetails>(personalDetailsPreset)
+  const [personalDetails, setPersonalDetails] = useLocalStorage<PersonalDetails>('cv_personalDetails', personalDetailsPreset)
   const [file, setFile] = useState<File | null>(null);
-  const [theme, setTheme] = useState<string>('cupcake');
-  const [zoom, setZoom] = useState<number>(163);
-  const [experiences, setExperience] = useState<Experience[]>(experiencesPreset)
-  const [educations, setEducations] = useState<Education[]>(educationsPreset)
-  const [languages, setLanguages] = useState<Language[]>(languagesPreset)
-  const [skills, setSkills] = useState<Skill[]>(skillsPreset)
-  const [hobbies, setHobbies] = useState<Hobby[]>(hobbiesPreset)
+  const [theme, setTheme] = useLocalStorage<string>('cv_theme', 'cupcake');
+  const [zoom, setZoom] = useLocalStorage<number>('cv_zoom', 163);
+  const [experiences, setExperience] = useLocalStorage<Experience[]>('cv_experiences', experiencesPreset)
+  const [educations, setEducations] = useLocalStorage<Education[]>('cv_educations', educationsPreset)
+  const [languages, setLanguages] = useLocalStorage<Language[]>('cv_languages', languagesPreset)
+  const [skills, setSkills] = useLocalStorage<Skill[]>('cv_skills', skillsPreset)
+  const [hobbies, setHobbies] = useLocalStorage<Hobby[]>('cv_hobbies', hobbiesPreset)
 
   useEffect(() => {
     const defaultImageUrl = "/profile.jpg"
@@ -113,12 +114,9 @@ export default function Home() {
 
   return (
     <div>
-
-      <div className="hidden lg:block">
-        <section className="flex items-center h-screen">
-          {/* div pour les formulaires */}
-
-          <div className="w-1/3 h-full p-12 bg-base-200 scrollable no-scrollbar">
+      <div className="flex flex-col lg:flex-row min-h-screen">
+        {/* div pour les formulaires */}
+        <div className="w-full lg:w-1/3 h-auto lg:h-screen p-4 lg:p-12 bg-base-200 scrollable no-scrollbar">
             <div className="mb-4 flex items-center justify-between rounded">
               <h1 className="text-2xl font-bold italic">
                 CV
@@ -233,7 +231,7 @@ export default function Home() {
           </div>
 
           {/* div pour les preview du cv  */}
-          <div className="w-2/3 h-full bg-base-100 bg-[url('/file.svg')] bg-cover bg-center scrollable-preview">
+          <div className="w-full lg:w-2/3 h-screen lg:h-screen bg-base-100 bg-[url('/file.svg')] bg-cover bg-center scrollable-preview">
 
             <div className="flex justify-center items-center fixed z-[9999] top-5 right-5">
               <input
@@ -277,8 +275,6 @@ export default function Home() {
             </div>
           </div>
 
-        </section>
-
         {/* You can open the modal using document.getElementById('ID').showModal() method */}
         <dialog id="my_modal_3" className="modal">
           <div className="modal-box w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -316,27 +312,6 @@ export default function Home() {
             </div>
           </div>
         </dialog>
-      </div>
-
-
-      <div className="lg:hidden">
-        <div className="hero bg-base-200 min-h-screen">
-          <div className="hero-content text-center">
-            <div className="max-w-md">
-              <h1 className="text-3xl font-bold">Désolé le CV builder est seulement accessible sur ordinateur</h1>
-              <Image src="/sorry-sad.gif"
-                width={500}
-                height={500}
-                alt="Picture of the author"
-                className="mx-auto my-6"
-              />
-              <p className="py-6">
-                Pour une meilleure expérience utilisateur, veuillez utiliser un ordinateur.
-                Nous vous remercions de votre compréhension.
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
