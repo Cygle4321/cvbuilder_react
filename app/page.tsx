@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { educationsPreset, experiencesPreset, hobbiesPreset, languagesPreset, personalDetailsPreset, skillsPreset } from "@/presets";
 import CVPreview from "./components/CVPreview";
+import CVPreviewModern from "./components/CVPreviewModern";
 import ExperienceForm from "./components/ExperienceForm";
 import EducationForm from "./components/EducationForm";
 import LanguageForm from "./components/LanguageForm";
@@ -22,12 +23,19 @@ export default function Home() {
   const [personalDetails, setPersonalDetails] = useLocalStorage<PersonalDetails>('cv_personalDetails', personalDetailsPreset)
   const [file, setFile] = useState<File | null>(null);
   const [theme, setTheme] = useLocalStorage<string>('cv_theme', 'cupcake');
+  const [template, setTemplate] = useLocalStorage<string>('cv_template', 'classic');
   const [zoom, setZoom] = useLocalStorage<number>('cv_zoom', 163);
   const [experiences, setExperience] = useLocalStorage<Experience[]>('cv_experiences', experiencesPreset)
   const [educations, setEducations] = useLocalStorage<Education[]>('cv_educations', educationsPreset)
   const [languages, setLanguages] = useLocalStorage<Language[]>('cv_languages', languagesPreset)
   const [skills, setSkills] = useLocalStorage<Skill[]>('cv_skills', skillsPreset)
   const [hobbies, setHobbies] = useLocalStorage<Hobby[]>('cv_hobbies', hobbiesPreset)
+  
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     const defaultImageUrl = "/profile.jpg"
@@ -111,6 +119,8 @@ export default function Home() {
   }
 
 
+
+  if (!isMounted) return null;
 
   return (
     <div>
@@ -231,47 +241,71 @@ export default function Home() {
           </div>
 
           {/* div pour les preview du cv  */}
-          <div className="w-full lg:w-2/3 h-screen lg:h-screen bg-base-100 bg-[url('/file.svg')] bg-cover bg-center scrollable-preview">
+          <div className="w-full lg:w-2/3 h-screen lg:h-screen relative">
+            <div className="absolute top-5 right-5 z-[50] flex flex-col gap-2 items-end">
+              <div className="flex justify-center items-center">
+                <input
+                  type="range"
+                  min={50}
+                  max={200}
+                  value={zoom}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="range range-xs range-primary"
+                />
+                <p className="ml-4 text-sm text-primary">{zoom}%</p>
+              </div>
 
-            <div className="flex justify-center items-center fixed z-[9999] top-5 right-5">
-              <input
-                type="range"
-                min={50}
-                max={200}
-                value={zoom}
-                onChange={(e) => setZoom(Number(e.target.value))}
-                className="range range-xs range-primary"
-              />
-              <p className="ml-4 text-sm text-primary">{zoom}%</p>
-
+              <select
+                value={theme}
+                onChange={(e) => setTheme(e.target.value)}
+                className="select select-bordered select-sm w-32"
+              >
+                {themes.map((themeName) => (
+                  <option key={themeName} value={themeName}>
+                    {themeName}
+                  </option>
+                ))}
+              </select>
+              
+              <select
+                value={template}
+                onChange={(e) => setTemplate(e.target.value)}
+                className="select select-bordered select-sm w-32"
+              >
+                <option value="classic">Classic</option>
+                <option value="modern">Modern</option>
+              </select>
             </div>
 
-            <select
-              value={theme}
-              onChange={(e) => setTheme(e.target.value)}
-              className="select select-bordered fixed z-[9999] select-sm w-32  right-6 top-12"
-            >
-              {themes.map((themeName) => (
-                <option key={themeName} value={themeName}>
-                  {themeName}
-                </option>
-              ))}
-            </select>
-
-            <div
-              className="flex justify-center items-center "
-              style={{ transform: `scale(${zoom / 200})` }}
-            >
-              <CVPreview
-                personalDetails={personalDetails}
-                file={file}
-                theme={theme}
-                experiences={experiences}
-                educations={educations}
-                languages={languages}
-                skills={skills}
-                hobbies={hobbies}
-              />
+            <div className="w-full h-full bg-base-100 bg-[url('/file.svg')] bg-cover bg-center scrollable-preview flex justify-center items-start pt-10">
+              <div
+                className="transition-transform"
+                style={{ transform: `scale(${zoom / 200})`, transformOrigin: 'top center' }}
+              >
+                {template === 'classic' ? (
+                  <CVPreview
+                    personalDetails={personalDetails}
+                    file={file}
+                    theme={theme}
+                    experiences={experiences}
+                    educations={educations}
+                    languages={languages}
+                    skills={skills}
+                    hobbies={hobbies}
+                  />
+                ) : (
+                  <CVPreviewModern
+                    personalDetails={personalDetails}
+                    file={file}
+                    theme={theme}
+                    experiences={experiences}
+                    educations={educations}
+                    languages={languages}
+                    skills={skills}
+                    hobbies={hobbies}
+                  />
+                )}
+              </div>
             </div>
           </div>
 
@@ -295,18 +329,33 @@ export default function Home() {
 
                 <div className=" w-full max-w-full  flex justify-center items-center">
 
-                  <CVPreview
-                    personalDetails={personalDetails}
-                    file={file}
-                    theme={theme}
-                    experiences={experiences}
-                    educations={educations}
-                    languages={languages}
-                    skills={skills}
-                    hobbies={hobbies}
-                    download={true}
-                    ref={cvPreviewRef}
-                  />
+                  {template === 'classic' ? (
+                    <CVPreview
+                      personalDetails={personalDetails}
+                      file={file}
+                      theme={theme}
+                      experiences={experiences}
+                      educations={educations}
+                      languages={languages}
+                      skills={skills}
+                      hobbies={hobbies}
+                      download={true}
+                      ref={cvPreviewRef}
+                    />
+                  ) : (
+                    <CVPreviewModern
+                      personalDetails={personalDetails}
+                      file={file}
+                      theme={theme}
+                      experiences={experiences}
+                      educations={educations}
+                      languages={languages}
+                      skills={skills}
+                      hobbies={hobbies}
+                      download={true}
+                      ref={cvPreviewRef}
+                    />
+                  )}
                 </div>
               </div>
             </div>

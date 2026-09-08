@@ -1,6 +1,9 @@
 import { Education } from "@/type";
 import { Plus } from "lucide-react";
 import React, { useState } from "react";
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableItem } from "./SortableItem";
 
 type Props = {
     educations: Education[];
@@ -8,9 +11,8 @@ type Props = {
 }
 
 const EducationForm: React.FC<Props> = ({ educations, setEducations }) => {
-
-
     const [newEducation, setNewEducation] = useState<Education>({
+        id: '',
         school: '',
         degree: '',
         startDate: '',
@@ -18,15 +20,23 @@ const EducationForm: React.FC<Props> = ({ educations, setEducations }) => {
         description: '',
     })
 
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-        fied: keyof Education) => {
-        setNewEducation({ ...newEducation, [fied]: e.target.value })
+        field: keyof Education) => {
+        setNewEducation({ ...newEducation, [field]: e.target.value })
     }
 
     const handleAddEducation = () => {
-        setEducations([...educations, newEducation]);
+        const newEdu = { ...newEducation, id: Date.now().toString() };
+        setEducations([...educations, newEdu]);
         setNewEducation({
+            id: '',
             school: '',
             degree: '',
             startDate: '',
@@ -35,9 +45,40 @@ const EducationForm: React.FC<Props> = ({ educations, setEducations }) => {
         });
     }
 
+    const handleDelete = (id: string) => {
+        setEducations(educations.filter(edu => edu.id !== id));
+    };
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+
+        if (over && active.id !== over.id) {
+            const oldIndex = educations.findIndex((item) => item.id === active.id);
+            const newIndex = educations.findIndex((item) => item.id === over.id);
+            setEducations(arrayMove(educations, oldIndex, newIndex));
+        }
+    };
 
     return (
         <div>
+            {educations.length > 0 && (
+                <div className="mb-4">
+                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                        <SortableContext items={educations.map(e => e.id || '')} strategy={verticalListSortingStrategy}>
+                            {educations.map((edu, index) => (
+                                <SortableItem 
+                                    key={edu.id || index.toString()} 
+                                    id={edu.id || index.toString()} 
+                                    title={edu.degree} 
+                                    subtitle={edu.school} 
+                                    onDelete={handleDelete} 
+                                />
+                            ))}
+                        </SortableContext>
+                    </DndContext>
+                </div>
+            )}
+
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between">
                     <input
@@ -68,7 +109,7 @@ const EducationForm: React.FC<Props> = ({ educations, setEducations }) => {
                         }
                         value={newEducation.startDate}
                         onChange={(e) => handleChange(e, 'startDate')}
-                        className="input in put-bordered w-full"
+                        className="input input-bordered w-full"
                     />
 
                     <input
