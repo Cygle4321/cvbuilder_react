@@ -123,10 +123,17 @@ export default function Home() {
   if (!isMounted) return null;
 
   return (
-    <div>
+    <main className="min-h-screen">
+      <div className="sr-only">
+        <h2>Créateur de Curriculum Vitae professionnel en ligne</h2>
+        <p>
+          Concevez, personnalisez et téléchargez votre CV gratuitement en format PDF haute définition avec prévisualisation en temps réel.
+        </p>
+      </div>
+
       <div className="flex min-h-screen flex-col lg:flex-row">
         {/* div pour les formulaires */}
-        <div className={`w-full shrink-0 lg:w-1/3 h-auto lg:h-screen p-4 pb-28 lg:p-12 bg-base-200 scrollable no-scrollbar ${showMobilePreview ? "hidden lg:block" : "block"}`}>
+        <section aria-label="Formulaire d'édition du CV" className={`w-full shrink-0 lg:w-1/3 h-auto lg:h-screen p-4 pb-28 lg:p-12 bg-base-200 scrollable no-scrollbar ${showMobilePreview ? "hidden lg:block" : "block"}`}>
             <div className="mb-4 flex items-center justify-between rounded">
               <h1 className="text-2xl font-bold italic">
                 CV
@@ -150,7 +157,7 @@ export default function Home() {
 
 
               <div className="flex justify-between items-center">
-                <h1 className="badge badge-primary badge-outline">Qui etes-vous ?</h1>
+                <h2 className="badge badge-primary badge-outline">Qui etes-vous ?</h2>
                 <button
                   onClick={handleResetPersonalDetails}
                   className="btn btn-primary btn-sm rounded-full">
@@ -165,7 +172,7 @@ export default function Home() {
               />
 
               <div className="flex justify-between items-center">
-                <h1 className="badge badge-primary badge-outline">Expériences</h1>
+                <h2 className="badge badge-primary badge-outline">Expériences</h2>
                 <button
                   onClick={handleResetExperiences}
                   className="btn btn-primary btn-sm rounded-full">
@@ -179,7 +186,7 @@ export default function Home() {
               />
 
               <div className="flex justify-between items-center">
-                <h1 className="badge badge-primary badge-outline">Educations</h1>
+                <h2 className="badge badge-primary badge-outline">Formations</h2>
                 <button
                   onClick={handleResetEducations}
                   className="btn btn-primary btn-sm rounded-full">
@@ -194,7 +201,7 @@ export default function Home() {
               />
 
               <div className="flex justify-between items-center">
-                <h1 className="badge badge-primary badge-outline">Langues</h1>
+                <h2 className="badge badge-primary badge-outline">Langues</h2>
                 <button
                   onClick={handleResetLanguages}
                   className="btn btn-primary btn-sm rounded-full">
@@ -211,7 +218,7 @@ export default function Home() {
 
                 <div className="w-1/2">
                   <div className="flex justify-between items-center">
-                    <h1 className="badge badge-primary badge-outline">Compétences</h1>
+                    <h2 className="badge badge-primary badge-outline">Compétences</h2>
                     <button
                       onClick={handleResetSkills}
                       className="btn btn-primary btn-sm  rounded-full">
@@ -223,7 +230,7 @@ export default function Home() {
 
                 <div className="ml-4 w-1/2">
                   <div className="flex justify-between items-center">
-                    <h1 className="badge badge-primary badge-outline">Loisirs</h1>
+                    <h2 className="badge badge-primary badge-outline">Loisirs</h2>
                     <button
                       onClick={handleResetHobbies}
                       className="btn btn-primary btn-sm rounded-full">
@@ -238,10 +245,10 @@ export default function Home() {
               </div>
             </div>
 
-          </div>
+          </section>
 
-          {/* div pour les preview du cv  */}
-          <div className={`${showMobilePreview ? "block" : "hidden lg:block"} w-full lg:w-2/3 h-screen lg:h-screen relative overflow-hidden`}>
+          {/* section pour les preview du cv  */}
+          <section aria-label="Aperçu et personnalisation du CV" className={`${showMobilePreview ? "block" : "hidden lg:block"} w-full lg:w-2/3 h-screen lg:h-screen relative overflow-hidden`}>
             <button
               type="button"
               onClick={() => setShowMobilePreview(false)}
@@ -315,7 +322,7 @@ export default function Home() {
                 )}
               </div>
             </div>
-          </div>
+          </section>
 
           {!showMobilePreview && (
             <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-base-300 bg-base-100/95 p-4 shadow-lg backdrop-blur lg:hidden">
@@ -386,6 +393,6 @@ export default function Home() {
           </div>
         </dialog>
       </div>
-    </div>
+    </main>
   );
 }
