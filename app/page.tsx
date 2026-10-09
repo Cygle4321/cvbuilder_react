@@ -1,7 +1,6 @@
 "use client"
 
-import { Eye, RotateCw, Save } from "lucide-react";
-import Image from "next/image";
+import { ArrowLeft, Eye, RotateCw, Save } from "lucide-react";
 import PersonalDetailsForm from "./components/PersonalDetailsForm";
 import { Education, Experience, Hobby, Language, PersonalDetails, Skill } from "@/type";
 import { useEffect, useRef, useState } from "react";
@@ -32,6 +31,7 @@ export default function Home() {
   const [hobbies, setHobbies] = useLocalStorage<Hobby[]>('cv_hobbies', hobbiesPreset)
   
   const [isMounted, setIsMounted] = useState(false);
+  const [showMobilePreview, setShowMobilePreview] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -124,9 +124,9 @@ export default function Home() {
 
   return (
     <div>
-      <div className="flex flex-col lg:flex-row min-h-screen">
+      <div className="flex min-h-screen flex-col lg:flex-row">
         {/* div pour les formulaires */}
-        <div className="w-full lg:w-1/3 h-auto lg:h-screen p-4 lg:p-12 bg-base-200 scrollable no-scrollbar">
+        <div className={`w-full shrink-0 lg:w-1/3 h-auto lg:h-screen p-4 pb-28 lg:p-12 bg-base-200 scrollable no-scrollbar ${showMobilePreview ? "hidden lg:block" : "block"}`}>
             <div className="mb-4 flex items-center justify-between rounded">
               <h1 className="text-2xl font-bold italic">
                 CV
@@ -241,8 +241,16 @@ export default function Home() {
           </div>
 
           {/* div pour les preview du cv  */}
-          <div className="w-full lg:w-2/3 h-screen lg:h-screen relative">
-            <div className="absolute top-5 right-5 z-[50] flex flex-col gap-2 items-end">
+          <div className={`${showMobilePreview ? "block" : "hidden lg:block"} w-full lg:w-2/3 h-screen lg:h-screen relative overflow-hidden`}>
+            <button
+              type="button"
+              onClick={() => setShowMobilePreview(false)}
+              className="absolute top-3 left-3 z-[60] btn btn-sm btn-ghost rounded-full lg:hidden"
+            >
+              <ArrowLeft className="w-4" />
+              Retour aux modifications
+            </button>
+            <div className="absolute top-3 right-3 sm:top-5 sm:right-5 z-[50] flex flex-col gap-2 items-end">
               <div className="flex justify-center items-center">
                 <input
                   type="range"
@@ -277,10 +285,10 @@ export default function Home() {
               </select>
             </div>
 
-            <div className="w-full h-full bg-base-100 bg-[url('/file.svg')] bg-cover bg-center scrollable-preview flex justify-center items-start pt-10">
+            <div className="w-full h-full bg-base-100 bg-[url('/file.svg')] bg-cover bg-center scrollable-preview flex justify-start lg:justify-center items-start overflow-x-auto pt-24 pb-8 px-4">
               <div
-                className="transition-transform"
-                style={{ transform: `scale(${zoom / 200})`, transformOrigin: 'top center' }}
+                className="transition-transform origin-top-left sm:origin-top"
+                style={{ transform: `scale(${zoom / 200})` }}
               >
                 {template === 'classic' ? (
                   <CVPreview
@@ -308,6 +316,22 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          {!showMobilePreview && (
+            <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-base-300 bg-base-100/95 p-4 shadow-lg backdrop-blur lg:hidden">
+              <button
+                type="button"
+                onClick={() => setShowMobilePreview(true)}
+                className="btn btn-primary w-full rounded-full"
+              >
+                <Save className="w-4" />
+                Enregistrer et voir l’aperçu
+              </button>
+              <p className="mt-2 text-center text-xs opacity-70">
+                Vos informations sont enregistrées automatiquement.
+              </p>
+            </div>
+          )}
 
         {/* You can open the modal using document.getElementById('ID').showModal() method */}
         <dialog id="my_modal_3" className="modal">
